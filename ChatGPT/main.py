@@ -1,8 +1,7 @@
 import os
 import model_manager
-import session_manager
 import auth_manager
-import chat_loop
+import chat_ui
 
 def main():
     # Get ChatGPT.data directory from environment variable
@@ -16,13 +15,8 @@ def main():
     model_filepath = f"{data_dir}/model_file.txt"
     model_id = model_manager.get_model(api_key, model_filepath)
 
-    # Get session ID
-    #session_filepath = f"{data_dir}/session_id.txt"
-    #session_id = session_manager.get_session(model_id, session_filepath)
-
-    # Start chat loop
-    #chat_loop.run(model_id, session_id, api_key)
-    chat_loop.run(model_id, api_key)
+    # Lauch GUI
+    chat_ui.main(data_dir, api_key, model_id)
 
 if __name__ == "__main__":
     main()

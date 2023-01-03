@@ -3,7 +3,7 @@
 time (
 	set -euo pipefail
 
-	FRIDA_ROOT=$(pwd)/openai-chat-gpt
+	CHAT_GPT_ROOT=$(pwd)/openai-chat-gpt.venv
 
 	function make_pyenv () {
 		PACKAGES='pip wheel '
@@ -17,8 +17,8 @@ time (
 		VBIN=$VENV/bin
 		PROMPT='python-venv'
 		ACTIVATE=$VBIN/activate
-		FRIDA_PYENV=$BIN/pyenv
-		FRIDA_PYTHON=$BIN/python
+		CHAT_GPT_PYENV=$BIN/pyenv
+		CHAT_GPT_PYTHON=$BIN/python
 		VENV_ARGS="--system-site-packages --symlinks --clear --prompt $PROMPT"
 
 		rm -rf $ROOT
@@ -34,7 +34,7 @@ time (
 		done
 		deactivate
 
-		cat > $FRIDA_PYENV <<-END
+		cat > $CHAT_GPT_PYENV <<-END
 			#!/bin/bash
 			set -euo pipefail
 			source $ACTIVATE
@@ -42,18 +42,18 @@ time (
 			echo "# running: \$@"
 			exec \$@
 		END
-		cat > $FRIDA_PYTHON <<-END
+		cat > $CHAT_GPT_PYTHON <<-END
 			#!/bin/bash
 			set -euo pipefail
-			exec $FRIDA_PYENV python \$@
+			exec $CHAT_GPT_PYENV python \$@
 		END
-		chmod -v +x $FRIDA_PYENV $FRIDA_PYTHON
-		echo @@ FRIDA PYTHON
-		cat $FRIDA_PYTHON
-		echo @@ FRIDA PYENV
-		cat $FRIDA_PYENV
+		chmod -v +x $CHAT_GPT_PYENV $CHAT_GPT_PYTHON
+		echo @@ CHAT_GPT PYTHON
+		cat $CHAT_GPT_PYTHON
+		echo @@ CHAT_GPT PYENV
+		cat $CHAT_GPT_PYENV
 	}
-	make_pyenv $FRIDA_ROOT python "PyQt6 PyQt6-NetworkAuth PyQt6-WebEngine"
+	make_pyenv $CHAT_GPT_ROOT python "PyQt6 PyQt6-NetworkAuth PyQt6-WebEngine"
 
 	true
 )

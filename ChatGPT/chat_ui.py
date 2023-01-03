@@ -4,9 +4,8 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 # from PyQt6 import QtCore, QtGui
 
-
 class MainWindow(QMainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, data_dir, api_key, model_id, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setWindowTitle("OpenAI ChatGPT")
 
@@ -81,11 +80,8 @@ class MainWindow(QMainWindow):
                 return True
         return False
 
-def chat_ui_main():
+def main(data_dir, api_key, model_id):
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = MainWindow(data_dir, api_key, model_id)
     window.show()
     sys.exit(app.exec())
-
-if __name__ == '__main__':
-    chat_ui_main()
