@@ -4,7 +4,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 from request_manager import send_message
-from response_logger import timestamp, log_response
+from session_logging import timestamp, log_response, get_timestamp
 
 class MainWindow(QMainWindow):
     def __init__(self, data_dir, api_key, model_id, parent=None):
@@ -23,68 +23,66 @@ class MainWindow(QMainWindow):
         self.splitterLeft = QSplitter()
         self.splitterLeft.setOrientation(Qt.Orientation.Vertical)
 
-        self.textEdit1 = QTextEdit()
-        self.textEdit2 = QTextEdit()
-        self.textEdit3 = QTextEdit()
+        self.textPrimaryEdit = QTextEdit()
+        self.textAlphaEdit = QTextEdit()
+        self.textBetaEdit = QTextEdit()
 
-        self.textEdits = (self.textEdit1, self.textEdit2, self.textEdit3)
+        self.textEdits = (self.textPrimaryEdit, self.textAlphaEdit, self.textBetaEdit)
 
         self.textOutput = QTextEdit()
-        self.button1 = QPushButton("Send Text 1")
-        self.button2 = QPushButton("Send Text 2")
-        self.button3 = QPushButton("Send Text 3")
+        self.buttonPrimary = QPushButton("Send Primary Text")
+        self.buttonAlpha = QPushButton("Send Text A")
+        self.buttonBeta = QPushButton("Send Text B")
         self.buttonOutput = QPushButton("Clear Output")
 
 
         # Set sizes
-        self.textEdit1.setMinimumHeight(20)
-        self.textEdit2.setMinimumHeight(200)
-        self.textEdit3.setMinimumHeight(200)
+        self.textPrimaryEdit.setMinimumHeight(64)
+        self.textAlphaEdit.setMinimumHeight(200)
+        self.textBetaEdit.setMinimumHeight(200)
         self.textOutput.setMinimumHeight(600)
         self.textOutput.setReadOnly(True)
 
         # Connect signals
-        self.button1.clicked.connect(lambda: self.sendText(self.textEdit1))
-        self.button2.clicked.connect(lambda: self.sendText(self.textEdit2))
-        self.button3.clicked.connect(lambda: self.sendText(self.textEdit3))
+        self.buttonPrimary.clicked.connect(lambda: self.sendText(self.textEdit1))
+        self.buttonAlpha.clicked.connect(lambda: self.sendText(self.textEdit2))
+        self.buttonBeta.clicked.connect(lambda: self.sendText(self.textEdit3))
         self.buttonOutput.clicked.connect(lambda: self.textOutput.clear())
-        self.textEdit1.installEventFilter(self)
-        self.textEdit2.installEventFilter(self)
-        self.textEdit3.installEventFilter(self)
 
-        # Create layouts
-        layout1 = QVBoxLayout()
-        layout1.addWidget(self.textEdit1)
-        layout1.addWidget(self.button1)
+        for textEdit in (self.textPrimaryEdit, self.textAlphaEdit, self.textBetaEdit):
+            textEdit.installEventFilter(self)
 
-        layout2 = QVBoxLayout()
-        layout2.addWidget(self.textEdit2)
-        layout2.addWidget(self.button2)
+        # Create layouts and widgets
+        layoutPrimary = QVBoxLayout()
+        layoutAlpha = QVBoxLayout()
+        layoutBeta = QVBoxLayout()
+        layoutOutput = QVBoxLayout()
 
-        layout3 = QVBoxLayout()
-        layout3.addWidget(self.textEdit3)
-        layout3.addWidget(self.button3)
-
-        layoutRight = QVBoxLayout()
-        layoutRight.addWidget(self.textOutput)
-        layoutRight.addWidget(self.buttonOutput)
-
-        widget1 = QWidget()
-        widget1.setLayout(layout1)
-        widget1.setMaximumHeight(128)
-
-        widget2 = QWidget()
-        widget2.setLayout(layout2)
-
-        widget3 = QWidget()
-        widget3.setLayout(layout3)
-
+        widgetPrimary = QWidget()
+        widgetAlpha = QWidget()
+        widgetBeta = QWidget()
         widgetRight = QWidget()
-        widgetRight.setLayout(layoutRight)
+        widgetPrimary.setMaximumHeight(128)
 
-        self.splitterLeft.addWidget(widget1)
-        self.splitterLeft.addWidget(widget2)
-        self.splitterLeft.addWidget(widget3)
+        for layout, text, button in (
+                (layoutOutput, self.textOutput, self.buttonOutput),
+                (layoutPrimary, self.textPrimaryEdit, self.buttonPrimary),
+                (layoutAlpha, self.textAlphaEdit, self.buttonAlpha),
+                (layoutBeta, self.textBetaEdit, self.buttonBeta)
+            ):
+            layout.addWidget(text)
+            layout.addWidget(button)
+
+        for widget, layout in (
+                (widgetPrimary, layoutPrimary),
+                (widgetAlpha, layoutAlpha),
+                (widgetBeta, layoutBeta),
+                (widgetRight, layoutOutput)
+            ):
+            widget.setLayout(layout)
+
+        for widget in (widgetPrimary, widgetAlpha, widgetBeta):
+            self.splitterLeft.addWidget(widget)
 
         # Add widgets to splitter
         self.splitterMain.addWidget(self.splitterLeft)
@@ -92,9 +90,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.splitterMain)
 
 
+    def log(self, text):
+        log_response(text, self.chat_log)
+
     def appendText(self, text, which):
-        timestamped = f'{timestamp()}: {which}\n{text.strip()}'
-        log_response(timestamped, self.chat_log)
+        this_timestamp = get_timestamp(which)
+        timestamped = f'{this_timestamp}\n{text.strip()}'
+        self.log(timestamped)
         self.textOutput.append(timestamped)
         self.textOutput.moveCursor(QTextCursor.MoveOperation.End)
         self.update()
@@ -104,8 +106,11 @@ class MainWindow(QMainWindow):
     def sendText(self, object):
         message = object.toPlainText()
         self.appendText(message, 'Sent')
-        response = send_message(self.model_id, self.api_key, message)
-        return self.appendText(response, 'Received')
+        response, output = send_message(self.model_id, self.api_key, message)
+        completed = f'{get_timestamp("Completion")}\n{output}'
+        result = self.appendText(response, 'Received')
+        self.log(completed)
+        return result
 
     def eventFilter(self, object, event):
         event_type=str(event.type())

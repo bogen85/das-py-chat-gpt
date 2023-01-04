@@ -1,4 +1,4 @@
-from datetime import datetime
+import time
 
 def log_response(response, filepath):
     # Append response to file
@@ -9,5 +9,8 @@ def log_response(response, filepath):
 def timestamp():
     # Getting current datetime and converting
     # it to string
-    dt = datetime.now()
-    return dt.strftime('%Y-%m-%d %H:%M:%S %Z')
+    dt = time.localtime()
+    return time.strftime('%Y-%m-%d %H:%M:%S %Z', dt)
+
+def get_timestamp(which):
+    return f'@{timestamp()} [{which}]'

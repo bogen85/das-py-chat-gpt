@@ -1,5 +1,4 @@
 import requests
-from pprint import pprint
 
 def get_model_list(api_key):
     # Get list of available models from OpenAI API
