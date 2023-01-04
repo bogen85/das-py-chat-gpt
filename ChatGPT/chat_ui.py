@@ -144,7 +144,7 @@ class MainWindow(QMainWindow):
 
         at_top, at_bottom = self.check_history_limits(object)
 
-        if (at_bottom and (key == Qt.Key.Key_Down)) or (at_top and (key == Qt.Key.Key_Up)):
+        if (at_bottom and (key == Qt.Key.Key_Right)) or (at_top and (key == Qt.Key.Key_Left)):
             return
 
         entry = object.toPlainText().strip()
