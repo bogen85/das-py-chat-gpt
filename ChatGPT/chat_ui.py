@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         self.textPrimaryEdit = QTextEdit()
         self.textAlphaEdit = QTextEdit()
         self.textBetaEdit = QTextEdit()
+        self.textOutput = QTextEdit()
 
         self.textPrimaryEdit.session_text_file = None
         self.textAlphaEdit.session_text_file = f'{data_dir}/alpha_edit.txt'
@@ -37,12 +38,14 @@ class MainWindow(QMainWindow):
         for edit in self.textEdits:
             edit.setPlainText(read_edit_text(edit.session_text_file))
 
-        self.textOutput = QTextEdit()
         self.buttonPrimary = QPushButton("Send Primary Text")
         self.buttonAlpha = QPushButton("Send Text A")
         self.buttonBeta = QPushButton("Send Text B")
         self.buttonOutput = QPushButton("Clear Output")
 
+        output, primaries = parse_log(self.chat_log)
+        self.textOutput.setPlainText(output)
+        self.textOutput.moveCursor(QTextCursor.MoveOperation.End)
 
         # Set sizes
         self.textPrimaryEdit.setMinimumHeight(64)
