@@ -29,6 +29,14 @@ class MainWindow(QMainWindow):
         self.textBetaEdit = QTextEdit()
         self.textOutput = QTextEdit()
 
+        self.textPrimaryEdit.session_history = []
+        self.textPrimaryEdit.session_index = 0
+        self.textPrimaryEdit.has_session_history = True
+        self.textPrimaryEdit.bottom_entry = ''
+
+        self.textAlphaEdit.has_session_history = False
+        self.textBetaEdit.has_session_history = False
+
         self.textPrimaryEdit.session_text_file = None
         self.textAlphaEdit.session_text_file = f'{data_dir}/alpha_edit.txt'
         self.textBetaEdit.session_text_file = f'{data_dir}/beta_edit.txt'
@@ -44,6 +52,11 @@ class MainWindow(QMainWindow):
         self.buttonOutput = QPushButton("Clear Output")
 
         output, primaries = parse_log(self.chat_log)
+
+        for primary in primaries:
+            self.textPrimaryEdit.session_history.append(primary)
+            self.textPrimaryEdit.session_index += 1
+
         self.textOutput.setPlainText(output)
         self.textOutput.moveCursor(QTextCursor.MoveOperation.End)
 
@@ -111,10 +124,66 @@ class MainWindow(QMainWindow):
         QApplication.processEvents()
         return True
 
+
+    def check_history_limits(self, object):
+        limit = len(object.session_history)
+
+        object.session_index = max(0,  object.session_index)
+        object.session_index = min(limit, object.session_index)
+
+        at_top = object.session_index == 0
+        at_bottom = object.session_index == limit
+        return (at_top, at_bottom)
+
+
+    def change_history_item(self, object, key):
+        if not object.has_session_history:
+            return
+
+        at_top, at_bottom = self.check_history_limits(object)
+
+        if (at_bottom and (key == Qt.Key.Key_Down)) or (at_top and (key == Qt.Key.Key_Up)):
+            return
+
+        if at_bottom:
+            object.bottom_entry = object.toPlainText().strip()
+
+        if Qt.Key.Key_Left == key:
+            object.session_index -= 1
+
+        if Qt.Key.Key_Right == key:
+            object.session_index += 1
+
+        at_top, at_bottom = self.check_history_limits(object)
+
+        if at_bottom:
+            object.setPlainText(object.bottom_entry)
+        else:
+            object.setPlainText(object.session_history[object.session_index])
+
+    def update_history_item(self, object, entry = None):
+        if entry:
+            object.session_history.append(entry)
+        object.clear()
+        object.session_index = len(object.session_history)
+
+    def update_session_history(self, object, entry):
+        if object.has_session_history:
+            if object.session_history and (object.session_history[-1] == entry):
+                self.update_history_item(object)
+            else:
+                self.update_history_item(object, entry)
+        else:
+            object.setPlainText(entry)
+
     def sendText(self, object):
         message = object.toPlainText().strip()
+
+        self.update_session_history(object, message)
+        if not message:
+            return
+
         write_edit_text(object.session_text_file, message)
-        object.setPlainText(message)
 
         self.appendText(message, 'Sent')
         response, output = send_message(self.model_id, self.api_key, message)
@@ -131,6 +200,8 @@ class MainWindow(QMainWindow):
                 key = event.key()
                 actions = {
                     Qt.Key.Key_Return: lambda: self.sendText(object),
+                    Qt.Key.Key_Left: lambda: self.change_history_item(object, key),
+                    Qt.Key.Key_Right: lambda: self.change_history_item(object, key),
                     ord('X'): lambda: object.cut(),
                     ord('C'): lambda: object.copy(),
                     ord('V'): lambda: object.paste()

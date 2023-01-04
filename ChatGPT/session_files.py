@@ -8,7 +8,6 @@ def read_edit_text(filepath):
     # Try to load edit from file if it exists
     edit_text = ""
     if filepath:
-        print(filepath)
         try:
             edit_text = load_edit_text(filepath)
         except FileNotFoundError:
@@ -34,22 +33,30 @@ def entry_type(line):
 
 def parse_log(filepath):
     text = read_edit_text(filepath)
-    if not text:
-        return ("", None)
 
     primary = []
     output = []
 
+    if not text:
+        return ("", primary)
+
     state = 0
+    primary_entry = []
     for line in text.splitlines():
         et = entry_type(line)
         if et == 1:
             state = 1
             output.append(line)
+            primary_entry.clear()
             continue
         if et == 2:
             state = 2
             output.append(line)
+            if primary_entry:
+                sent = '\n'.join(primary_entry).strip()
+                if sent:
+                    primary.append(sent)
+            primary_entry.clear()
             continue
         if et == 3:
             state = 0
@@ -57,5 +64,7 @@ def parse_log(filepath):
 
         if state in (1, 2):
             output.append(line)
+        if state == 1:
+            primary_entry.append(line)
 
-    return ('\n'.join(output), None)
+    return ('\n'.join(output), primary)
