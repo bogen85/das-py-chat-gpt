@@ -229,3 +229,5 @@ def main(data_dir, api_key, model_id):
     window = MainWindow(data_dir, api_key, model_id)
     window.show()
     sys.exit(app.exec())
+
+# CudaText: lexer_file="Python"; tab_size=4; tab_spaces=Yes; newline=LF;

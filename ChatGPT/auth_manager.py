@@ -17,3 +17,5 @@ def save_api_key(api_key, filepath):
     # Save API key to file
     with open(filepath, 'w') as f:
         f.write(api_key)
+
+# CudaText: lexer_file="Python"; tab_size=4; tab_spaces=Yes; newline=LF;

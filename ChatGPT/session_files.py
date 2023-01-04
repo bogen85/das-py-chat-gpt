@@ -68,3 +68,5 @@ def parse_log(filepath):
             primary_entry.append(line)
 
     return ('\n'.join(output), primary)
+
+# CudaText: lexer_file="Python"; tab_size=4; tab_spaces=Yes; newline=LF;

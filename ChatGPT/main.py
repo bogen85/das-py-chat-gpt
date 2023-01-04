@@ -20,3 +20,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# CudaText: lexer_file="Python"; tab_size=4; tab_spaces=Yes; newline=LF;

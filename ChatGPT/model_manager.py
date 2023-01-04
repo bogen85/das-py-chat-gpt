@@ -41,3 +41,5 @@ def get_model(api_key, filepath):
         save_model(model, filepath)
         model_id = model['id']
     return model_id
+
+# CudaText: lexer_file="Python"; tab_size=4; tab_spaces=Yes; newline=LF;

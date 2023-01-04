@@ -14,3 +14,5 @@ def timestamp():
 
 def get_timestamp(which):
     return f'@{timestamp()} [{which}]'
+
+# CudaText: lexer_file="Python"; tab_size=4; tab_spaces=Yes; newline=LF;
