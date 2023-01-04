@@ -88,7 +88,7 @@ class MainWindow(QMainWindow):
         widgetAlpha = QWidget()
         widgetBeta = QWidget()
         widgetRight = QWidget()
-        widgetPrimary.setMaximumHeight(128)
+        widgetPrimary.setMaximumHeight(196)
 
         for layout, text, button in (
                 (layoutPrimary, self.textPrimaryEdit, self.buttonPrimary),

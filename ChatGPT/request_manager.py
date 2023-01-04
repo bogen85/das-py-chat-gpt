@@ -21,6 +21,9 @@ def send_message(model_id, api_key, message):
         }
     )
     response_json = response.json()
-    response_text = response_json['choices'][0]['text']
-    del(response_json['choices'][0]['text'])
-    return (response_text, pprint.pformat(response_json))
+    try:
+        response_text = response_json['choices'][0]['text']
+        del(response_json['choices'][0]['text'])
+        return (response_text, pprint.pformat(response_json))
+    except Exception as e:
+        return (str(e), pprint.pformat(response))
