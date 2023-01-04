@@ -5,6 +5,7 @@ from PyQt6.QtGui import *
 
 from request_manager import send_message
 from session_logging import timestamp, log_response, get_timestamp
+from session_files import *
 
 class MainWindow(QMainWindow):
     def __init__(self, data_dir, api_key, model_id, parent=None):
@@ -27,7 +28,14 @@ class MainWindow(QMainWindow):
         self.textAlphaEdit = QTextEdit()
         self.textBetaEdit = QTextEdit()
 
+        self.textPrimaryEdit.session_text_file = None
+        self.textAlphaEdit.session_text_file = f'{data_dir}/alpha_edit.txt'
+        self.textBetaEdit.session_text_file = f'{data_dir}/beta_edit.txt'
+
         self.textEdits = (self.textPrimaryEdit, self.textAlphaEdit, self.textBetaEdit)
+
+        for edit in self.textEdits:
+            edit.setPlainText(read_edit_text(edit.session_text_file))
 
         self.textOutput = QTextEdit()
         self.buttonPrimary = QPushButton("Send Primary Text")
@@ -87,7 +95,6 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.splitterMain)
 
-
     def log(self, text):
         log_response(text, self.chat_log)
 
@@ -102,7 +109,10 @@ class MainWindow(QMainWindow):
         return True
 
     def sendText(self, object):
-        message = object.toPlainText()
+        message = object.toPlainText().strip()
+        write_edit_text(object.session_text_file, message)
+        object.setPlainText(message)
+
         self.appendText(message, 'Sent')
         response, output = send_message(self.model_id, self.api_key, message)
         completed = f'{get_timestamp("Completion")}\n{output}'
