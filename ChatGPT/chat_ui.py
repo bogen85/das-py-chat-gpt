@@ -44,9 +44,9 @@ class MainWindow(QMainWindow):
         self.textOutput.setReadOnly(True)
 
         # Connect signals
-        self.buttonPrimary.clicked.connect(lambda: self.sendText(self.textEdit1))
-        self.buttonAlpha.clicked.connect(lambda: self.sendText(self.textEdit2))
-        self.buttonBeta.clicked.connect(lambda: self.sendText(self.textEdit3))
+        self.buttonPrimary.clicked.connect(lambda: self.sendText(self.textPrimaryEdit))
+        self.buttonAlpha.clicked.connect(lambda: self.sendText(self.textAlphaEdit))
+        self.buttonBeta.clicked.connect(lambda: self.sendText(self.textBetaEdit))
         self.buttonOutput.clicked.connect(lambda: self.textOutput.clear())
 
         for textEdit in (self.textPrimaryEdit, self.textAlphaEdit, self.textBetaEdit):
@@ -65,21 +65,18 @@ class MainWindow(QMainWindow):
         widgetPrimary.setMaximumHeight(128)
 
         for layout, text, button in (
-                (layoutOutput, self.textOutput, self.buttonOutput),
                 (layoutPrimary, self.textPrimaryEdit, self.buttonPrimary),
                 (layoutAlpha, self.textAlphaEdit, self.buttonAlpha),
-                (layoutBeta, self.textBetaEdit, self.buttonBeta)
+                (layoutBeta, self.textBetaEdit, self.buttonBeta),
+                (layoutOutput, self.textOutput, self.buttonOutput)
             ):
-            layout.addWidget(text)
-            layout.addWidget(button)
+            for item in (text, button):
+                layout.addWidget(item)
 
-        for widget, layout in (
-                (widgetPrimary, layoutPrimary),
-                (widgetAlpha, layoutAlpha),
-                (widgetBeta, layoutBeta),
-                (widgetRight, layoutOutput)
-            ):
-            widget.setLayout(layout)
+        widgetPrimary.setLayout(layoutPrimary)
+        widgetAlpha.setLayout(layoutAlpha)
+        widgetRight.setLayout(layoutOutput)
+        widgetBeta.setLayout(layoutBeta)
 
         for widget in (widgetPrimary, widgetAlpha, widgetBeta):
             self.splitterLeft.addWidget(widget)
@@ -87,6 +84,7 @@ class MainWindow(QMainWindow):
         # Add widgets to splitter
         self.splitterMain.addWidget(self.splitterLeft)
         self.splitterMain.addWidget(widgetRight)
+
         self.setCentralWidget(self.splitterMain)
 
 
@@ -118,14 +116,15 @@ class MainWindow(QMainWindow):
             modifier=str(event.modifiers())
             if modifier == "KeyboardModifier.ControlModifier":
                 key = event.key()
-                if key == Qt.Key.Key_Return:
-                    return self.sendText(object)
-                if key == ord('X'):
-                    object.cut();
-                if key == ord('C'):
-                    object.copy();
-                if key == ord('V'):
-                    object.paste();
+                actions = {
+                    Qt.Key.Key_Return: lambda: self.sendText(object),
+                    ord('X'): lambda: object.cut(),
+                    ord('C'): lambda: object.copy(),
+                    ord('V'): lambda: object.paste()
+                }
+                if key in actions:
+                    actions[key]()
+
                 return True
         return False
 
