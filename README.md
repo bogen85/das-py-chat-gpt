@@ -25,7 +25,7 @@ All edit inputs are multiline.
 
 Output history is saved and is restored on next run of the program.
 
-I don't really know Qt6. (or any Qt).
+I don't really know Qt6. (or any Qt all that well). Most of what I know I've learned on this project.
 
 Having issue with it not reading `~/.config/qt6ct/qt6ct.conf` (if it is supposed to read it at all?)
 
@@ -34,6 +34,8 @@ Or how to have it read and apply it. I use Xfce4.
 Hence the theme being applied and the font setting.
 
 Some parts of the UI are resizable, but no changes are saved as I've not dug into that yet.
+
+I chose Python and Qt6 because that is what ChatGPT seemed to produce the fewest mistakes on for earlier attempts.
 
 <!---
   CudaText: lexer_file=Markdown; tab_size=2; tab_spaces=No; newline=LF;
