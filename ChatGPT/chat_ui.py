@@ -145,8 +145,12 @@ class MainWindow(QMainWindow):
         if (at_bottom and (key == Qt.Key.Key_Down)) or (at_top and (key == Qt.Key.Key_Up)):
             return
 
+        entry = object.toPlainText().strip()
+
         if at_bottom:
-            object.bottom_entry = object.toPlainText().strip()
+            object.bottom_entry = entry
+        else:
+            object.session_history[object.session_index] = entry
 
         if Qt.Key.Key_Left == key:
             object.session_index -= 1
