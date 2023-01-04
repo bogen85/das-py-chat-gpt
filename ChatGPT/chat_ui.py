@@ -1,7 +1,9 @@
-import sys
+import sys, os
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+
+import qdarktheme
 
 from request_manager import send_message
 from session_logging import timestamp, log_response, get_timestamp
@@ -217,7 +219,13 @@ class MainWindow(QMainWindow):
         return False
 
 def main(data_dir, api_key, model_id):
+    #QApplication.setPalette(QApplication.style().customPalette("dusk"))
+    #os.environ["QT_QPA_PLATFORMTHEME"]="qt6ct"
     app = QApplication(sys.argv)
+    qdarktheme.setup_theme()
+
+    app.setStyle("Fusion")
+    app.setFont(QFont("Fira Code", 12))
     window = MainWindow(data_dir, api_key, model_id)
     window.show()
     sys.exit(app.exec())
