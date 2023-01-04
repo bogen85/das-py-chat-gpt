@@ -37,6 +37,25 @@ Some parts of the UI are resizable, but no changes are saved as I've not dug int
 
 I chose Python and Qt6 because that is what ChatGPT seemed to produce the fewest mistakes on for earlier attempts.
 
+## Requirements
+
+Apart from the latest python3 for your system, qt6 is requrired.
+
+```shell
+$ dnf list installed 'qt6*'
+Installed Packages
+qt6-qtbase.x86_64                                                  6.3.1-3.el9                                                      @epel
+qt6-qtbase-common.noarch                                           6.3.1-3.el9                                                      @epel
+qt6-qtbase-devel.x86_64                                            6.3.1-3.el9                                                      @epel
+qt6-qtbase-gui.x86_64                                              6.3.1-3.el9                                                      @epel
+qt6-qtbase-static.x86_64                                           6.3.1-3.el9                                                      @epel
+qt6-qtsvg.x86_64                                                   6.3.1-2.el9                                                      @epel
+qt6-qttools.x86_64                                                 6.3.1-3.el9                                                      @epel
+qt6-qttools-common.noarch                                          6.3.1-3.el9                                                      @epel
+qt6-rpm-macros.noarch                                              6.3.1-1.el9                                                      @epel
+qt6ct.x86_64                                                       0.6-0.1.git6abd586.el9                                           @epel
+```
+
 <!---
   CudaText: lexer_file=Markdown; tab_size=2; tab_spaces=No; newline=LF;
   --->
