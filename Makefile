@@ -7,7 +7,7 @@ MAKEFLAGS:= \
 
 .ONESHELL:
 
-SHELL := /bin/bash
+SHELL := /usr/bin/bash
 PROJECT_ROOT := $(PWD)
 _ = echo "[$@]"; set -euo pipefail
 
