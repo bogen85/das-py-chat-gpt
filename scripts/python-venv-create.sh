@@ -53,7 +53,7 @@ time (
 		echo @@ CHAT_GPT PYENV
 		cat $CHAT_GPT_PYENV
 	}
-	make_pyenv $CHAT_GPT_ROOT python "PyQt6 PyQt6-NetworkAuth PyQt6-WebEngine pyqtdarktheme"
+	make_pyenv $CHAT_GPT_ROOT python3 "PyQt6 PyQt6-NetworkAuth PyQt6-WebEngine pyqtdarktheme"
 
 	true
 )
