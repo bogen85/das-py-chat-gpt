@@ -29,9 +29,12 @@ I don't really know Qt6. (or any Qt all that well). Most of what I know I've lea
 
 Having issue with it not reading `~/.config/qt6ct/qt6ct.conf` (if it is supposed to read it at all?)
 
+
 Or how to have it read and apply it. I use Xfce4.
 
 Hence the theme being applied and the font setting.
+
+I got `export QT_QPA_PLATFORMTHEME=qt6ct` to work with free pascal and libqt6pas (setting it before running and inside the application before `qt` calls) and it works, and global and user styling/theming is used. I did not get that to work using qt6 with python.
 
 Some parts of the UI are resizable, but no changes are saved as I've not dug into that yet.
 
